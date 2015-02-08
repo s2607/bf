@@ -32,13 +32,19 @@ func (vm *bfm) create(ssize int, tsize int, program string) {
 	vm.cpu.pc = 0
 	vm.cpu.halted = false
 }
-func (vm *bfm) step() {
+func (vm *bfm) step(nm rune) {
+	switch nm {
+	case '+':
+		fmt.Println("add")
+	default:
+		fmt.Println("invalid program" + string(nm))
+	}
 }
 
 func main() {
 	vm := new(bfm)
 	vm.create(1000, 1000, "+++.")
-	vm.step()
+	vm.step(rune(vm.program[0]))
 	vm.cpu.status()
 
 }
