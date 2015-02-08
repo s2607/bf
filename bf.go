@@ -32,7 +32,7 @@ func (vm *bfm) create(ssize int, tsize int, program string) {
 	vm.cpu.pc = 0
 	vm.cpu.halted = false
 }
-func (vm *bfm) step(nm rune) {
+func (vm *bfm) ex(nm rune) {
 	switch nm {
 	case '+':
 		vm.tape[vm.cpu.dc] += 1
@@ -41,16 +41,19 @@ func (vm *bfm) step(nm rune) {
 	case '.':
 		fmt.Print(int(vm.tape[vm.cpu.dc]))
 	default:
-		fmt.Println("invalid program" + string(nm))
+		fmt.Println("invalid instrucion" + string(nm))
 	}
-}
+	vm.cpu.pc += 1
 
+}
+func (vm *bfm) step() {
+	vm.ex(rune(vm.program[vm.cpu.pc]))
+}
 func main() {
 	vm := new(bfm)
 	vm.create(1000, 1000, "+.")
-	vm.step(rune(vm.program[0]))
-	vm.step(rune(vm.program[1]))
-
+	vm.step()
+	vm.step()
 	vm.cpu.status()
 
 }
