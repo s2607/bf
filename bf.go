@@ -35,7 +35,11 @@ func (vm *bfm) create(ssize int, tsize int, program string) {
 func (vm *bfm) step(nm rune) {
 	switch nm {
 	case '+':
-		fmt.Println("add")
+		vm.tape[vm.cpu.dc] += 1
+	case '-':
+		vm.tape[vm.cpu.dc] -= 1
+	case '.':
+		fmt.Print(int(vm.tape[vm.cpu.dc]))
 	default:
 		fmt.Println("invalid program" + string(nm))
 	}
@@ -43,8 +47,10 @@ func (vm *bfm) step(nm rune) {
 
 func main() {
 	vm := new(bfm)
-	vm.create(1000, 1000, "+++.")
+	vm.create(1000, 1000, "+.")
 	vm.step(rune(vm.program[0]))
+	vm.step(rune(vm.program[1]))
+
 	vm.cpu.status()
 
 }
