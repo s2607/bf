@@ -41,7 +41,7 @@ func (vm *bfm) skip() {
 		}
 	}
 	vm.cpu.lc -= 1
-	vm.cpu.pc += 2
+	//vm.cpu.pc += 2
 }
 func (vm *bfm) ex(nm rune) {
 	switch nm {
