@@ -13,7 +13,7 @@ type alu struct {
 }
 
 func (cpu alu) status() {
-	fmt.Println("status would go here")
+	fmt.Printf("%d\t  %d\t  %d\n", cpu.dc, cpu.pc, cpu.lc)
 }
 
 type bfm struct {
@@ -41,6 +41,7 @@ func (vm *bfm) skip() {
 		}
 	}
 	vm.cpu.lc -= 1
+	vm.cpu.pc += 2
 }
 func (vm *bfm) ex(nm rune) {
 	switch nm {
@@ -49,17 +50,17 @@ func (vm *bfm) ex(nm rune) {
 	case '-':
 		vm.tape[vm.cpu.dc] -= 1
 	case '.':
-		fmt.Print(int(vm.tape[vm.cpu.dc]))
+		//fmt.Print(int(vm.tape[vm.cpu.dc]))
 	case '<':
 		vm.cpu.dc -= 1
 	case '>':
 		vm.cpu.dc += 1
 	case '[':
+		vm.cpu.lc += 1
+		vm.stack[vm.cpu.lc] = vm.cpu.pc - 1
 		if vm.tape[vm.cpu.dc] == 0 {
 			vm.skip()
 		}
-		vm.cpu.lc += 1
-		vm.stack[vm.cpu.lc] = vm.cpu.pc
 	case ']':
 		vm.cpu.pc = vm.stack[vm.cpu.lc]
 		vm.cpu.lc -= 1
@@ -74,10 +75,15 @@ func (vm *bfm) step() bool {
 	}
 	return vm.cpu.halted
 }
+func (vm bfm) status() {
+	fmt.Printf("%d\t %d\t %c\t ", vm.stack[vm.cpu.lc], vm.tape[vm.cpu.dc], vm.program[vm.cpu.pc])
+	vm.cpu.status()
+}
 func main() {
 	vm := new(bfm)
-	vm.create(1000, 1000, "+++++.[-].")
+	vm.create(1000, 1000, "+++++.-.++++++.[-.]+.")
 	for !vm.step() {
+		vm.status()
 	}
 	vm.cpu.status()
 
