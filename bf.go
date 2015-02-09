@@ -69,15 +69,17 @@ func (vm *bfm) ex(nm rune) {
 	vm.cpu.pc += 1
 }
 func (vm *bfm) step() bool {
-	vm.cpu.halted = (vm.cpu.pc >= len(vm.program))
+	vm.cpu.halted = (vm.cpu.pc >= len(vm.program)-1)
 	if !vm.cpu.halted {
 		vm.ex(rune(vm.program[vm.cpu.pc])) //TODO:UTF8
 	}
 	return vm.cpu.halted
 }
 func (vm bfm) status() {
-	fmt.Printf("%d\t %d\t %c\t ", vm.stack[vm.cpu.lc], vm.tape[vm.cpu.dc], vm.program[vm.cpu.pc])
-	vm.cpu.status()
+	if !vm.cpu.halted {
+		fmt.Printf("%d\t %d\t %c\t ", vm.stack[vm.cpu.lc], vm.tape[vm.cpu.dc], vm.program[vm.cpu.pc])
+		vm.cpu.status()
+	}
 }
 func main() {
 	vm := new(bfm)
