@@ -2,9 +2,6 @@ package mnp
 
 import "fmt"
 
-//import "io/ioutil"
-//import "strconv"
-
 type alu struct {
 	pc     int
 	lc     int
@@ -23,18 +20,6 @@ type Task struct {
 	acumstack []int
 	ldata     []int
 	program   string
-}
-type ophandle func(*Task)
-
-func nop(vm *Task) {
-	vm.cpu.pc += 1
-}
-func (cpu *alu) initopmap() {
-	cpu.opmap = make([]ophandle, int('~'))
-	var i = 0
-	for i = 0; i < len(cpu.opmap); i++ {
-		cpu.opmap[i] = nop
-	}
 }
 
 type oTask struct {
