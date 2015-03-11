@@ -1,4 +1,4 @@
-package main
+package mnp
 
 import "fmt"
 
@@ -17,16 +17,16 @@ func (cpu alu) status() {
 	//fmt.Printf("%d\t  %d\t  %d\n", cpu.dc, cpu.pc, cpu.lc)
 }
 
-type task struct {
+type Task struct {
 	cpu       alu
 	callstack []int
 	acumstack []int
 	ldata     []int
 	program   string
 }
-type ophandle func(*task)
+type ophandle func(*Task)
 
-func nop(vm *task) {
+func nop(vm *Task) {
 	vm.cpu.pc += 1
 }
 func (cpu *alu) initopmap() {
@@ -37,18 +37,18 @@ func (cpu *alu) initopmap() {
 	}
 }
 
-type otask struct {
+type oTask struct {
 	id    int
 	name  string
-	tasks []int //list of task ids sorted by priority
+	Tasks []int //list of Task ids sorted by priority
 
 }
 type system struct {
-	ostate otask
-	states []otask
+	ostate oTask
+	states []oTask
 }
 
-func (vm *task) create(ssize int, tsize int, program string) {
+func (vm *Task) Create(ssize int, tsize int, program string) {
 	vm.callstack = make([]int, ssize)
 	vm.acumstack = make([]int, ssize)
 	vm.ldata = make([]int, tsize)
@@ -59,31 +59,22 @@ func (vm *task) create(ssize int, tsize int, program string) {
 	vm.cpu.pc = 0
 	vm.cpu.halted = false
 }
-func (vm *task) ex(nm rune) {
+func (vm *Task) ex(nm rune) {
 	var op = int(nm)
 	if op < len(vm.cpu.opmap) {
 		vm.cpu.opmap[op](vm)
 	}
 }
-func (vm *task) step() bool {
+func (vm *Task) Step() bool {
 	vm.cpu.halted = (vm.cpu.pc >= len(vm.program)-1)
 	if !vm.cpu.halted {
 		vm.ex(rune(vm.program[vm.cpu.pc])) //TODO:UTF8
 	}
 	return vm.cpu.halted
 }
-func (vm task) status() {
+func (vm Task) Status() {
 	if !vm.cpu.halted {
 		fmt.Printf("%d\t %d\t %c\t ", vm.callstack[vm.cpu.lc], vm.ldata[vm.cpu.pc], vm.program[vm.cpu.pc])
 		vm.cpu.status()
 	}
-}
-func main() {
-	vm := new(task)
-	vm.create(1000, 1000, "+++++.-.++++++.[-.]+.")
-	for !vm.step() {
-		vm.status()
-	}
-	vm.cpu.status()
-
 }
